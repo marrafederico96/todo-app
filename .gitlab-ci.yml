@@ -14,6 +14,9 @@ stages:
 # Step 1: Compila e crea il .jar
 compile:
   stage: build
+  artifacts:
+    paths:
+      - target/*.jar
   script:
     - mvn clean package -DskipTests
 
