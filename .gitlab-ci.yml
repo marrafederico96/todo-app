@@ -1,4 +1,4 @@
-image: docker:latest
+image: maven:3.9.6-eclipse-temurin-21
 
 services:
   - docker:dind
@@ -9,10 +9,21 @@ variables:
 
 stages:
   - build
+  - docker
 
-build_image:
+# Step 1: Compila e crea il .jar
+compile:
   stage: build
+  script:
+    - mvn clean package -DskipTests
+
+# Step 2: Costruisci e fai push dell'immagine Docker
+docker_build:
+  image: docker:latest
+  stage: docker
   script:
     - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
+  dependencies:
+    - compile
