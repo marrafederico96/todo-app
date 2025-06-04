@@ -10,6 +10,7 @@ variables:
 stages:
   - build
   - docker
+  - pages
 
 # Step 1: Compila e crea il .jar
 compile:
@@ -30,3 +31,15 @@ docker_build:
     - docker push $IMAGE_TAG
   dependencies:
     - compile
+
+# Step 3: Job per GitLab Pages
+pages:
+  stage: pages
+  script:
+    - mkdir public
+    - echo "<h1>Benvenuto su GitLab Pages!</h1>" > public/index.html
+  artifacts:
+    paths:
+      - public
+  only:
+    - main # o il branch che usi per pubblicare
